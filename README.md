@@ -41,6 +41,10 @@ Se a execucao de scripts estiver bloqueada:
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
+ou caso tenha baixado da internet
+```
+Unblock-File .\script.ps1
+```
 
 ## Arquivos Necessarios
 
