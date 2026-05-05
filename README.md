@@ -20,7 +20,7 @@ Script PowerShell para enumeracao de contas corporativas Microsoft e, opcionalme
 - Windows PowerShell 5.1 ou PowerShell 7+.
 - Acesso HTTPS para `https://login.microsoftonline.com`.
 - Permissao para executar scripts PowerShell.
-- Permissao para instalar modulos no escopo do usuario, caso ainda nao existam.
+- Permissao para instalar modulos no escopo do usuário, caso ainda não existam.
 
 Modulos usados:
 
@@ -46,7 +46,7 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 
 ### `users.txt`
 
-Lista de usuarios, um por linha, sem o dominio:
+Lista de usuários, um por linha, sem o domínio:
 
 ```text
 jsilva
@@ -64,7 +64,7 @@ joseal@empresa.onmicrosoft.com
 
 ### `senhas.txt`
 
-Necessario apenas quando usar `-TestLogin`.
+Necessário apenas quando usar `-TestLogin`.
 
 ```text
 Senha123
@@ -72,7 +72,7 @@ P@ssw0rd!
 OutraSenha
 ```
 
-## Uso Rapido
+## Uso Rápido
 
 Mostrar ajuda:
 
@@ -121,7 +121,7 @@ Proxy unico:
 .\enum_passs_brute_fixed_v2.ps1 -Domain empresa.onmicrosoft.com -UserList .\users.txt -TestLogin -Proxy "http://127.0.0.1:8080"
 ```
 
-Lista de proxies com rotacao:
+Lista de proxies com rotação:
 
 ```powershell
 .\enum_passs_brute_fixed_v2.ps1 -Domain empresa.onmicrosoft.com -UserList .\users.txt -TestLogin -ProxyList "http://127.0.0.1:8080","http://127.0.0.1:8081"
@@ -206,7 +206,7 @@ Quando `-TestLogin` nao e usado, ou nenhuma tentativa e registrada, a coluna `Se
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-### Modulo nao instala
+### Modulo não instalado
 
 Verifique a conectividade com a PowerShell Gallery e tente instalar manualmente:
 
@@ -223,9 +223,9 @@ Force TLS 1.2 na sessao atual:
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 ```
 
-Se estiver usando proxy com interceptacao HTTPS, instale o certificado CA do proxy como confiavel.
+Se estiver usando proxy com interceptação HTTPS, instale o certificado CA do proxy como confiável.
 
-### Proxy nao funciona
+### Proxy não funciona
 
 Teste o proxy isoladamente:
 
