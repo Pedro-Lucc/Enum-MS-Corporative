@@ -244,6 +244,4 @@ Invoke-RestMethod -Uri "https://login.microsoftonline.com" -Proxy "http://127.0.
 - Considere politicas de bloqueio de conta do ambiente.
 - Documente escopo, janela de teste e responsáveis antes da execução.
 
-## Licenca
 
-Adicione a licenca apropriada antes de publicar o projeto no GitHub.
