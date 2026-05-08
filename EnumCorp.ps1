@@ -39,7 +39,7 @@ if ($Help) {
     exit
 }
 
-Write-Host "=================================================================" -ForegroundColor DarkGray
+Write-Host "===============================================================================" -ForegroundColor DarkGray
 Write-Host "    _____ _   _ _   _ __  __     __  __ ____" -ForegroundColor Cyan
 Write-Host "   | ____| \ | | | | |  \/  |   |  \/  / ___|" -ForegroundColor Cyan
 Write-Host "   |  _| |  \| | | | | |\/| |   | |\/| \___ \" -ForegroundColor Cyan
@@ -47,9 +47,9 @@ Write-Host "   | |___| |\  | |_| | |  | |   | |  | |___) |" -ForegroundColor Cya
 Write-Host "   |_____|_| \_|\___/|_|  |_|   |_|  |_|____/" -ForegroundColor Cyan
 Write-Host "`n`n"
 Write-Host "             ENUM MS CORPORATE" -ForegroundColor Yellow
-Write-Host "-----------------------------------------------------------------" -ForegroundColor DarkGray
-Write-Host " ferramenta para enumeracao de contas corporativas da Microsoft" -ForegroundColor Gray
-Write-Host "=================================================================`n`n" -ForegroundColor DarkGray
+Write-Host "------------------------------------------------------------------------------" -ForegroundColor DarkGray
+Write-Host " ferramenta para enumeracao e brute force de contas corporativas da Microsoft" -ForegroundColor Gray
+Write-Host "==============================================================================`n`n" -ForegroundColor DarkGray
 
 # =========================
 # CONFIG
